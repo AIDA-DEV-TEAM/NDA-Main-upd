@@ -113,9 +113,6 @@ export default function HomePage({ darkMode, setDarkMode }) {
             >
               {darkMode ? "☀️" : "🌙"}
             </button>
-            <button className="cta" type="button">
-              Sign in
-            </button>
           </nav>
         </div>
       </header>
