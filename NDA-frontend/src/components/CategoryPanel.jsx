@@ -4,9 +4,9 @@ export default function CategoryPanel({ category, onClose, navigate }) {
   const [answers, setAnswers] = useState(
     category && Array.isArray(category.subcategories)
       ? category.subcategories.reduce((acc, curr) => {
-          acc[curr.id] = ""; // Initialize answers with empty strings
-          return acc;
-        }, {})
+        acc[curr.id] = ""; // Initialize answers with empty strings
+        return acc;
+      }, {})
       : {}
   );
 
@@ -19,9 +19,9 @@ export default function CategoryPanel({ category, onClose, navigate }) {
     setAnswers(
       category && Array.isArray(category.subcategories)
         ? category.subcategories.reduce((acc, curr) => {
-            acc[curr.id] = "";
-            return acc;
-          }, {})
+          acc[curr.id] = "";
+          return acc;
+        }, {})
         : {}
     );
     setCurrentIndex(0);
@@ -161,7 +161,7 @@ export default function CategoryPanel({ category, onClose, navigate }) {
                   const isNetwork = category.id === 'network';
                   return (
                     <div key={sub.id} className="form-group">
-                      <div className="question-progress" style={{ marginBottom: 8, fontSize: 13, color: 'var(--muted-1)'}}>
+                      <div className="question-progress" style={{ marginBottom: 8, fontSize: 13, color: 'var(--muted-1)' }}>
                         Question {currentIndex + 1} of {category.subcategories.length}
                       </div>
                       <label htmlFor={sub.id}>{sub.title}</label>
@@ -227,13 +227,13 @@ export default function CategoryPanel({ category, onClose, navigate }) {
           (category.id === 'building-coverage' ? (
             <div className="panel-form panel-form--security">
               {/* Security / Building and Coverage -> Navigate to chat page */}
-              <p>Start an interactive session with the AI agent to collect building & coverage requirements.</p>
-              <button 
-                className="btn-primary" 
-                type="button" 
+              <p>Start an interactive session with the Neom Collaboration Service Agent to collect building & coverage requirements.</p>
+              <button
+                className="btn-primary"
+                type="button"
                 onClick={() => navigate && navigate('/chat', { state: { category } })}
               >
-                Interact with AI Agent
+                Interact with Neom Collaboration Service Agent
               </button>
             </div>
           ) : (
@@ -278,7 +278,7 @@ export default function CategoryPanel({ category, onClose, navigate }) {
       <div className="panel-footer">
         {(category.id === "site-details" || category.id === 'network') && !finished ? (
           <p className="panel-note panel-note--required">Fill in the details for your project site. Each question is required.</p>
-  ) : category.id === 'building-coverage' ? null : (
+        ) : category.id === 'building-coverage' ? null : (
           !finished && <p className="panel-note">Pick a subcategory to get started.</p>
         )}
       </div>

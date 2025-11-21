@@ -65,8 +65,8 @@ export default function ChatPage({ darkMode, setDarkMode }) {
       setSessionId(data.session_id);
       // Add initial agent message to conversation
       if (data.agent_message) {
-        setMessages([{ 
-          role: 'assistant', 
+        setMessages([{
+          role: 'assistant',
           content: data.agent_message,
           timestamp: new Date().toISOString()
         }]);
@@ -89,10 +89,10 @@ export default function ChatPage({ darkMode, setDarkMode }) {
     const userMessage = inputValue.trim();
     setInputValue('');
     setError("");
-    
+
     // Add user message immediately
-    setMessages((prev) => [...prev, { 
-      role: 'user', 
+    setMessages((prev) => [...prev, {
+      role: 'user',
       content: userMessage,
       timestamp: new Date().toISOString()
     }]);
@@ -109,11 +109,11 @@ export default function ChatPage({ darkMode, setDarkMode }) {
         throw new Error(`Server error (${res.status}): ${txt}`);
       }
       const data = await res.json();
-      
+
       // Add agent response to conversation
       if (data.agent_message) {
-        setMessages((prev) => [...prev, { 
-          role: 'assistant', 
+        setMessages((prev) => [...prev, {
+          role: 'assistant',
           content: data.agent_message,
           timestamp: new Date().toISOString(),
           isDone: Boolean(data.done)
@@ -137,18 +137,23 @@ export default function ChatPage({ darkMode, setDarkMode }) {
     <div className="chatgpt-container">
       {/* ChatGPT-style Header */}
       <header className="chatgpt-header">
-        <button 
-          className="chatgpt-back-btn" 
+        <button
+          className="chatgpt-back-btn"
           onClick={() => navigate('/')}
           title="Back to Home"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
+            <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
-        
-        <div className="chatgpt-header-title">
-          <h1>{category?.title || 'AI Agent'}</h1>
+
+        <div className="chatgpt-header-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+          <img
+            src="/images/logo-neom.webp"
+            alt="Neom Logo"
+            style={{ height: '40px', width: 'auto' }}
+          />
+          <h1>Neom Collaboration Service Agent</h1>
         </div>
 
         <div className="chatgpt-header-actions">
@@ -159,13 +164,13 @@ export default function ChatPage({ darkMode, setDarkMode }) {
           >
             {darkMode ? "☀️" : "🌙"}
           </button>
-          <button 
-            className="chatgpt-new-chat-btn" 
+          <button
+            className="chatgpt-new-chat-btn"
             onClick={resetConversation}
             title="New conversation"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12h14"/>
+              <path d="M12 5v14M5 12h14" />
             </svg>
           </button>
         </div>
@@ -178,7 +183,7 @@ export default function ChatPage({ darkMode, setDarkMode }) {
             <div className="chatgpt-empty-state">
               <div className="chatgpt-empty-icon">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               </div>
               <h2>How can I help you today?</h2>
@@ -192,24 +197,24 @@ export default function ChatPage({ darkMode, setDarkMode }) {
                     {msg.role === 'assistant' ? (
                       <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         {/* Antenna */}
-                        <line x1="16" y1="2" x2="16" y2="5"/>
-                        <circle cx="16" cy="3.5" r="1.2"/>
+                        <line x1="16" y1="2" x2="16" y2="5" />
+                        <circle cx="16" cy="3.5" r="1.2" />
                         {/* Head */}
-                        <rect x="8" y="7" width="16" height="14" rx="2"/>
+                        <rect x="8" y="7" width="16" height="14" rx="2" />
                         {/* Left Ear */}
-                        <circle cx="5" cy="13" r="2"/>
+                        <circle cx="5" cy="13" r="2" />
                         {/* Right Ear */}
-                        <circle cx="27" cy="13" r="2"/>
+                        <circle cx="27" cy="13" r="2" />
                         {/* Left Eye */}
-                        <circle cx="12" cy="12" r="1.5"/>
+                        <circle cx="12" cy="12" r="1.5" />
                         {/* Right Eye */}
-                        <circle cx="20" cy="12" r="1.5"/>
+                        <circle cx="20" cy="12" r="1.5" />
                         {/* Mouth */}
-                        <line x1="12" y1="17" x2="20" y2="17"/>
+                        <line x1="12" y1="17" x2="20" y2="17" />
                       </svg>
                     ) : (
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                       </svg>
                     )}
                   </div>
@@ -233,20 +238,20 @@ export default function ChatPage({ darkMode, setDarkMode }) {
                   <div className="chatgpt-message-avatar">
                     <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       {/* Antenna */}
-                      <line x1="16" y1="2" x2="16" y2="5"/>
-                      <circle cx="16" cy="3.5" r="1.2"/>
+                      <line x1="16" y1="2" x2="16" y2="5" />
+                      <circle cx="16" cy="3.5" r="1.2" />
                       {/* Head */}
-                      <rect x="8" y="7" width="16" height="14" rx="2"/>
+                      <rect x="8" y="7" width="16" height="14" rx="2" />
                       {/* Left Ear */}
-                      <circle cx="5" cy="13" r="2"/>
+                      <circle cx="5" cy="13" r="2" />
                       {/* Right Ear */}
-                      <circle cx="27" cy="13" r="2"/>
+                      <circle cx="27" cy="13" r="2" />
                       {/* Left Eye */}
-                      <circle cx="12" cy="12" r="1.5"/>
+                      <circle cx="12" cy="12" r="1.5" />
                       {/* Right Eye */}
-                      <circle cx="20" cy="12" r="1.5"/>
+                      <circle cx="20" cy="12" r="1.5" />
                       {/* Mouth */}
-                      <line x1="12" y1="17" x2="20" y2="17"/>
+                      <line x1="12" y1="17" x2="20" y2="17" />
                     </svg>
                   </div>
                   <div className="chatgpt-message-content">
@@ -282,14 +287,14 @@ export default function ChatPage({ darkMode, setDarkMode }) {
               disabled={loading}
               className="chatgpt-input"
             />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={!inputValue.trim() || loading}
               className="chatgpt-send-btn"
               title="Send message"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
             </button>
           </div>
