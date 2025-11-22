@@ -1,0 +1,158 @@
+#fastapi_app.py
+import uuid
+from typing import Dict, Any
+from datetime import datetime, timedelta
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from langchain_core.messages import HumanMessage, AIMessage
+from main import app as langgraph_app
+
+app = FastAPI(title="CSA Backend API")
+
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# In-memory session storage with timestamps
+sessions: Dict[str, Dict[str, Any]] = {}
+SESSION_TIMEOUT = timedelta(hours=1)
+
+# Models
+class UserMessage(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    session_id: str
+    agent_message: str
+    status: str
+
+class SessionInfo(BaseModel):
+    session_id: str
+    status: str
+    history: list
+    next_response: str
+    created_at: str
+
+# Helper Functions
+def cleanup_old_sessions():
+    """Remove sessions older than timeout"""
+    cutoff = datetime.now() - SESSION_TIMEOUT
+    expired = [sid for sid, data in sessions.items() 
+               if data.get("created_at", datetime.now()) < cutoff]
+    for sid in expired:
+        del sessions[sid]
+
+def validate_session(session_id: str) -> Dict[str, Any]:
+    """Validate session exists and is not expired"""
+    cleanup_old_sessions()
+    
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="Session not found or expired")
+    
+    return sessions[session_id]
+
+# API Endpoints
+@app.post("/start", response_model=ChatResponse)
+def start_conversation():
+    """Start a new conversation and get the first question"""
+    cleanup_old_sessions()
+    
+    session_id = str(uuid.uuid4())
+    
+    initial_state = {
+        "history": [],
+        "status": "not done",
+        "next_response": None,
+        "mode": "api"
+    }
+    
+    result = langgraph_app.invoke(initial_state, {"recursion_limit": 200})
+    
+    # Add metadata
+    result["created_at"] = datetime.now()
+    result["updated_at"] = datetime.now()
+    sessions[session_id] = result
+    
+    agent_message = str(result.get("next_response", "")).strip()
+    
+    return ChatResponse(
+        session_id=session_id,
+        agent_message=agent_message,
+        status=result.get("status", "not done")
+    )
+
+@app.post("/chat/{session_id}", response_model=ChatResponse)
+def send_message(session_id: str, user_msg: UserMessage):
+    """Send user response and get next question"""
+    previous_state = validate_session(session_id)
+    
+    if previous_state.get("status") == "done":
+        raise HTTPException(
+            status_code=400, 
+            detail="Conversation already completed. Start a new session."
+        )
+    
+    # Build updated state
+    current_history = previous_state.get("history", [])
+    state_update = {
+        "history": current_history + [HumanMessage(content=user_msg.message)],
+        "mode": "api",
+        "status": "not done"
+    }
+    
+    # Invoke graph
+    result = langgraph_app.invoke(state_update, {"recursion_limit": 200})
+    
+    # Update session with metadata
+    result["created_at"] = previous_state.get("created_at", datetime.now())
+    result["updated_at"] = datetime.now()
+    sessions[session_id] = result
+    
+    agent_message = str(result.get("next_response", "")).strip()
+    
+    return ChatResponse(
+        session_id=session_id,
+        agent_message=agent_message,
+        status=result.get("status", "not done")
+    )
+
+@app.get("/session/{session_id}", response_model=SessionInfo)
+def get_session_info(session_id: str):
+    """Get current session information - useful for debugging and recovery"""
+    state = validate_session(session_id)
+    
+    return SessionInfo(
+        session_id=session_id,
+        status=state.get("status", "not done"),
+        history=[msg.content if hasattr(msg, 'content') else str(msg) 
+                 for msg in state.get("history", [])],
+        next_response=state.get("next_response", ""),
+        created_at=state.get("created_at", datetime.now()).isoformat()
+    )
+
+@app.delete("/session/{session_id}")
+def delete_session(session_id: str):
+    """Manually delete a session"""
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    del sessions[session_id]
+    return {"message": "Session deleted successfully"}
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "active_sessions": len(sessions)
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("fastapi_app:app", host="0.0.0.0", port=8000, reload=True)

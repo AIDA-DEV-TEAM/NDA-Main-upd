@@ -245,6 +245,11 @@ body.dark .chatgpt-message-avatar {
   flex: 1;
   min-width: 0;
   line-height: 1.6;
+  padding-top: 6px;
+}
+
+.chatgpt-markdown > *:first-child {
+  margin-top: 0;
 }
 
 .chatgpt-text {

@@ -116,7 +116,7 @@ export default function ChatPage({ darkMode, setDarkMode }) {
           role: 'assistant',
           content: data.agent_message,
           timestamp: new Date().toISOString(),
-          isDone: Boolean(data.done)
+          isDone: data.status === 'done'
         }]);
       }
     } catch (err) {
@@ -219,15 +219,15 @@ export default function ChatPage({ darkMode, setDarkMode }) {
                     )}
                   </div>
                   <div className="chatgpt-message-content">
-                    {msg.role === 'assistant' && msg.content.toLowerCase().includes('done') ? (
+                    {msg.role === 'assistant' ? (
                       <div className="chatgpt-markdown">
                         <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
-                          {msg.content.replace(/^Done\s*[:\-]?/i, '').trim()}
+                          {msg.content.replace(/^Done\s*[:\-]?/i, '').replace(/^\s*\[ASK\s+Q\d+\]\s*/i, '').replace(/(\*\*[^*]+\*\*)\s*[:\-]\s*/, '$1\n\n').trim()}
                         </ReactMarkdown>
                       </div>
                     ) : (
                       <div className="chatgpt-text">
-                        {msg.content.replace(/^\s*\[ASK\s+Q\d+\]\s*/i, '')}
+                        {msg.content}
                       </div>
                     )}
                   </div>
