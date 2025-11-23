@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 load_dotenv()
 
 # Initialize the LLM
-llm = init_chat_model("gpt-4o", model_provider="azure_openai", api_version="2025-01-01-preview")
+llm = init_chat_model("gpt-4o-mini", model_provider="azure_openai", api_version="2025-01-01-preview")
 
 # Structured output model
 class LLM_Response(BaseModel):

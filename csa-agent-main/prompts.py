@@ -3,8 +3,8 @@ import json
 
 QUESTIONS = [
     "**IP Telephony Requirements** - How many buildings require IP telephony services?",
-    "**Rooms, Size, and Telephone Sets** - For each building, could you specify the number of rooms, the size of each room, and the number of telephone sets required per room?",
-    "**Network Provider** - Could you also specify whether the network used is ABC Company or not?",
+    "For each building, could you specify the number of rooms, the size of each room, and the number of telephone sets required per room?",
+    "Could you also specify whether the network used is ABC Company or not?",
     "**Common Area Connectivity** - For the buildings that require coverage, which common areas (e.g., lobbies, corridors, cafeteria) need to be covered with Wi-Fi or IP telephony services?",
     "**Call Centre / ACD Services** - Are call center or ACD services required? If yes, please provide the number of positions, the number of concurrent calls, additional features, and any other detailed requirements.",
     "**Standard Video Conferencing** - How many rooms in each building require Video Conferencing systems? Please specify the size of each room and the number of people expected to use the system in each room.",
@@ -76,7 +76,7 @@ Before moving to the next question, ensure the current answer meets these criter
 When ALL questions have been answered (or explicitly accepted as incomplete by user):
 
 1. Set status to "done"
-2. Generate a comprehensive final summary in clean Professional Markdown format. **CRITICAL: Ensure the output uses standard Markdown formatting (actual line breaks, lists, and headings) for proper rendering, NOT the literal characters '\n' or '\\n' in the final output string.**
+2. Generate a comprehensive final summary in clean Professional Markdown format. **CRITICAL: Ensure the output uses standard Markdown formatting (actual line breaks, lists, and headings) for proper rendering, no running commentary or extra text should be shown.**
 3. Use the heading: "Collaboration Service - Infrastructure Requirements Summary"
 4. Include all sections with clear subsections and use **bullet points** and **actual line breaks** to format lists and details.
 5. Add a "Time Estimates" section at the end with:
@@ -84,7 +84,6 @@ When ALL questions have been answered (or explicitly accepted as incomplete by u
     - Total estimated project time
 6. Base estimates on the actual requirements provided
 7. Do NOT use words like "BOQ" or "Bill of Quantities"
-8. Only markdown summary should be shown, no running commentary or extra text
 
 === OUTPUT FORMAT (for non-Done turns) ===
 - Output ONLY your next message to the user

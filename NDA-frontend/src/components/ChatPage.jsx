@@ -153,7 +153,7 @@ export default function ChatPage({ darkMode, setDarkMode }) {
             alt="Neom Logo"
             style={{ height: '40px', width: 'auto' }}
           />
-          <h1>Neom Collaboration Service Agent</h1>
+          <h1>Neom Collaboration Service AI Agent</h1>
         </div>
 
         <div className="chatgpt-header-actions">

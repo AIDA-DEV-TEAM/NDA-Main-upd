@@ -99,7 +99,7 @@ export default function HomePage({ darkMode, setDarkMode }) {
               />
             </div>
             <div className="brand__text">
-              <div className="brand__title">Neom Collaboration Service Agent</div>
+              <div className="brand__title">Neom Collaboration Service AI Agent</div>
               <div className="brand__subtitle">Powered by AI</div>
             </div>
           </div>
