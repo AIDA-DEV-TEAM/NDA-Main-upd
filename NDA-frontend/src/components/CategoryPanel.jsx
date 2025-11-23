@@ -102,7 +102,14 @@ export default function CategoryPanel({ category, onClose, navigate }) {
                   {category.subcategories.map((sub, idx) => (
                     <li key={sub.id} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={{ flex: 1 }}>
-                        <strong>{sub.title}:</strong> {String(answers[sub.id] ?? "") || <em>—</em>}
+                        <strong>{sub.title}:</strong>{" "}
+                        {answers[sub.id] === "special-rooms" ? (
+                          <>
+                            <strong>Special Rooms:</strong> "{answers[`${sub.id}_custom`] || ""}"
+                          </>
+                        ) : (
+                          String(answers[sub.id] ?? "") || <em>—</em>
+                        )}
                       </div>
                       <div>
                         <button
@@ -161,28 +168,51 @@ export default function CategoryPanel({ category, onClose, navigate }) {
                   const isNetwork = category.id === 'network';
                   return (
                     <div key={sub.id} className="form-group">
-                      <div className="question-progress" style={{ marginBottom: 8, fontSize: 13, color: 'var(--muted-1)' }}>
+                      <div className="question-progress" style={{ marginBottom: 24, fontSize: 13, color: 'var(--muted-1)' }}>
                         Question {currentIndex + 1} of {category.subcategories.length}
                       </div>
                       <label htmlFor={sub.id}>{sub.title}</label>
-                      {isNetwork ? (
-                        <div className="choice-row" role="radiogroup" aria-labelledby={sub.id}>
-                          <button
-                            type="button"
-                            className={`choice-btn ${answers[sub.id] === 'Yes' ? 'choice-btn--selected' : ''}`}
-                            onClick={() => { setAnswers((p) => ({ ...p, [sub.id]: 'Yes' })); setError(''); }}
-                            aria-pressed={answers[sub.id] === 'Yes'}
-                          >
-                            Yes
-                          </button>
-                          <button
-                            type="button"
-                            className={`choice-btn ${answers[sub.id] === 'No' ? 'choice-btn--selected' : ''}`}
-                            onClick={() => { setAnswers((p) => ({ ...p, [sub.id]: 'No' })); setError(''); }}
-                            aria-pressed={answers[sub.id] === 'No'}
-                          >
-                            No
-                          </button>
+                      {sub.options ? (
+                        <div className="choice-container">
+                          <div className="choice-list" role="radiogroup" aria-labelledby={sub.id} style={{ marginTop: '16px' }}>
+                            {sub.options.map((opt, idx) => {
+                              const isObject = typeof opt === 'object';
+                              const value = isObject ? opt.value : opt;
+                              const label = isObject ? opt.label : opt;
+                              const isSelected = answers[sub.id] === value;
+
+                              return (
+                                <div key={idx} className="choice-item" style={{ marginBottom: '8px' }}>
+                                  <button
+                                    type="button"
+                                    className={`choice-btn ${isSelected ? 'choice-btn--selected' : ''}`}
+                                    onClick={() => {
+                                      setAnswers((p) => ({ ...p, [sub.id]: value }));
+                                      setError('');
+                                    }}
+                                    aria-pressed={isSelected}
+                                    style={{ width: '100%', textAlign: 'left', justifyContent: 'flex-start' }}
+                                  >
+                                    {label}
+                                  </button>
+                                  {isObject && opt.hasInput && isSelected && (
+                                    <div style={{ marginTop: '8px', paddingLeft: '4px' }}>
+                                      <input
+                                        type="text"
+                                        name={`${sub.id}_custom`}
+                                        value={answers[`${sub.id}_custom`] || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="Please specify details..."
+                                        className="custom-input"
+                                        autoFocus
+                                        style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-surface)' }}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       ) : (
                         <>
@@ -195,6 +225,7 @@ export default function CategoryPanel({ category, onClose, navigate }) {
                             placeholder={sub.description}
                             autoComplete="off"
                             autoFocus
+                            style={{ marginTop: '12px' }}
                           />
                         </>
                       )}

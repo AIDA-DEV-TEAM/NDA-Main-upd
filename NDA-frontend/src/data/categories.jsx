@@ -14,14 +14,33 @@ const categories = [
   },
   {
     id: "network",
-    title: "Network",
-    description: "Connectivity requirements",
+    title: "Telephony & Conferencing",
+    description: "Call, Meetings and Contact Centers Requirements",
     accent: "#8b5cf6",
-    iconUrl: "/icons/network.svg",
+    iconUrl: "/icons/telephony.svg",
     subcategories: [
-      { id: "indoor-wifi", title: "Indoor WiFI Internet access required?", description: "Select Yes or No" },
-      { id: "outdoor-wifi", title: "Outdoor Wifi Internet access required?", description: "Select Yes or No" },
-      { id: "wired-internet", title: "Wired Internet access required?", description: "Select Yes or No" },
+      {
+        id: "ip-telephony",
+        title: "IP Telephony Services (Internal calls, External calls)",
+        description: "Select telephony requirements",
+        options: ["Yes", "No", "Internal PBX Only", "External PSTN calls required"]
+      },
+      {
+        id: "call-center",
+        title: "Call center/Automatic Call distribution system",
+        description: "Select Yes or No",
+        options: ["Yes", "No"]
+      },
+      {
+        id: "video-conferencing",
+        title: "Video Conferencing services",
+        description: "Select video conferencing requirements",
+        options: [
+          "Yes",
+          "No",
+          { value: "special-rooms", label: "ANY SPECIAL meeting rooms fit out required like Executive Rooms, Telepresence, etc", hasInput: true }
+        ]
+      },
     ],
   },
   {
