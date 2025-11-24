@@ -158,7 +158,7 @@ export default function ChatPage({ darkMode, setDarkMode }) {
         </div>
 
         <div className="chatgpt-header-title">
-          <h1>NEOM Collaboration Demand Agent</h1>
+          <h1>NEOM Collaboration Demand Assistant</h1>
         </div>
 
         <div className="chatgpt-header-actions">
