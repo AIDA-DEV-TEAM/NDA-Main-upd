@@ -91,12 +91,13 @@ export default function HomePage({ darkMode, setDarkMode }) {
           <div className="brand" role="banner">
             <div className="brand__logo" aria-hidden="true">
               <img
-                src="/images/logo-neom.webp"
+                src="/images/logo-neom1.png"
                 alt="NEOM Logo"
                 width="36"
                 height="36"
                 style={{ objectFit: "contain" }}
               />
+              <span>NEOM</span>
             </div>
             <div className="brand__text">
               <div className="brand__title">Neom Collaboration Service AI Agent</div>

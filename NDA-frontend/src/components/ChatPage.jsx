@@ -137,22 +137,27 @@ export default function ChatPage({ darkMode, setDarkMode }) {
     <div className="chatgpt-container">
       {/* ChatGPT-style Header */}
       <header className="chatgpt-header">
-        <button
-          className="chatgpt-back-btn"
-          onClick={() => navigate('/')}
-          title="Back to Home"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
+        <div className="chatgpt-header-left">
+          <button
+            className="chatgpt-back-btn"
+            onClick={() => navigate('/')}
+            title="Back to Home"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div className="chatgpt-logo-container">
+            <img
+              src="/images/logo-neom1.png"
+              alt="Neom Logo"
+              className="chatgpt-header-logo"
+            />
+            <span className="chatgpt-header-neom-text">NEOM</span>
+          </div>
+        </div>
 
-        <div className="chatgpt-header-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-          <img
-            src="/images/logo-neom.webp"
-            alt="Neom Logo"
-            style={{ height: '40px', width: 'auto' }}
-          />
+        <div className="chatgpt-header-title">
           <h1>Neom Collaboration Service AI Agent</h1>
         </div>
 
