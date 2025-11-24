@@ -258,13 +258,13 @@ export default function CategoryPanel({ category, onClose, navigate }) {
           (category.id === 'building-coverage' ? (
             <div className="panel-form panel-form--security">
               {/* Security / Building and Coverage -> Navigate to chat page */}
-              <p>Start an interactive session with the Neom Collaboration Service AI Agent to collect building & coverage requirements.</p>
+              <p>Start an interactive session with the NEOM Collaboration Demand Agent to collect building & coverage requirements.</p>
               <button
                 className="btn-primary"
                 type="button"
                 onClick={() => navigate && navigate('/chat', { state: { category } })}
               >
-                Interact with Neom Collaboration Service AI Agent
+                Interact with NEOM Collaboration Demand Agent
               </button>
             </div>
           ) : (
