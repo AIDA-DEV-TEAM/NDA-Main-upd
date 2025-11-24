@@ -1,51 +1,61 @@
-# Network Demand Agent
+# NEOM Collaboration Service AI Agent
 
-A full-stack AI-powered application that collects network infrastructure requirements through an interactive conversational interface. The backend uses LangGraph and Azure OpenAI to orchestrate multi-turn conversations, while the frontend provides a responsive React UI for user interaction.
+A full-stack AI-powered application that collects network infrastructure requirements through an interactive conversational interface. The backend uses LangGraph and Azure OpenAI to orchestrate multi-turn conversations, while the frontend provides a modern React UI with Chatbot interface for user interaction.
 
 ## Project Overview
 
-The **Network Demand Agent** guides users through a structured questionnaire to gather data for network infrastructure planning. It consists of two main components:
+The **NEOM Collaboration Service AI Agent** guides users through a structured questionnaire to gather data for network infrastructure planning. It consists of two main components:
 
 - **Backend (FastAPI):** Manages conversation state, orchestrates LLM interactions, and persists session data.
-- **Frontend (React/Vite):** Provides a modern UI for category selection and real-time chat with the AI agent.
+- **Frontend (React/Vite):** Provides a modern Chatbot-style UI with category selection and real-time chat with the AI agent.
 
 ### Key Features
 
-- **Multi-turn conversations** with state management via LangGraph.
-- **Azure OpenAI integration** for intelligent Q&A orchestration.
-- **Session-based chat** with in-memory storage (or Redis for production).
-- **CORS-enabled REST API** for frontend-backend communication.
-- **Responsive design** with dark mode support.
-- **Real-time message streaming** with auto-scroll chat history.
-- **Structured data extraction** into a Bill of Quantities (BoQ) format.
+- **Chatbot-style interface** with modern, responsive design
+- **Multi-turn conversations** with state management via LangGraph
+- **Azure OpenAI integration** for intelligent Q&A orchestration
+- **Session-based chat** with in-memory storage (or Redis for production)
+- **CORS-enabled REST API** for frontend-backend communication
+- **Responsive design** with dark mode support and smooth theme transitions
+- **Real-time message streaming** with auto-scroll chat history
+- **Markdown rendering** for rich formatted responses
+- **Structured data extraction** into a Bill of Quantities (BoQ) format
+- **Professional NEOM branding** with logo and custom styling
 
 ---
 
 ## Project Structure
 
 ```
-Network Demand Agent/
-├── lg-fastapi-exp/                 # Backend (FastAPI + LangGraph)
+CSA-Main/
+├── csa-agent-main/                 # Backend (FastAPI + LangGraph)
 │   ├── fastapi_app.py              # FastAPI endpoints and session management
 │   ├── main.py                      # LangGraph state machine and LLM orchestration
 │   ├── prompts.py                   # Question list and system prompt templates
 │   ├── pyproject.toml               # Python dependencies and project metadata
+│   ├── check_env.py                 # Environment validation script
 │   └── .env                         # Environment variables (Azure OpenAI credentials)
 │
 └── NDA-frontend/                   # Frontend (React + Vite)
     ├── src/
-    │   ├── App.jsx                  # Root component with theme management
+    │   ├── App.jsx                  # Root component with routing
     │   ├── main.jsx                 # React entry point
     │   ├── components/
+    │   │   ├── HomePage.jsx          # Home page with category selection
+    │   │   ├── ChatPage.jsx          # Chatbot-style chat interface
     │   │   ├── CategoryGrid.jsx      # Grid of service categories
-    │   │   ├── CategoryPanel.jsx     # Panel with subcategories and AI chat
+    │   │   ├── CategoryPanel.jsx     # Panel with subcategories
     │   │   └── CategoryCard.jsx      # Individual category card
     │   ├── data/
     │   │   └── categories.jsx        # Category and subcategory data
     │   └── styles/                   # CSS modules (animations, theme, layout)
+    │       ├── chatPage.css          # Chatbot-style chat page styling
+    │       ├── base.css              # Base styles and theme variables
+    │       ├── animations.css        # Animation definitions
+    │       └── ...                   # Other component styles
     ├── public/
-    │   ├── icons/                    # SVG icons (robot, user, etc.)
-    │   └── images/                   # Images (logo, branding)
+    │   ├── icons/                    # SVG icons
+    │   └── images/                   # Images (NEOM logo, branding)
     ├── index.html                    # HTML entry point
     ├── vite.config.js                # Vite configuration
     └── package.json                  # Node dependencies
@@ -126,6 +136,7 @@ Network Demand Agent/
 ### Request/Response Example (AI Chat Flow)
 
 1. **User clicks "Interact with AI Agent":**
+
    ```
    Frontend:  POST /start (empty body)
    Backend:   → Create session, init GraphState, invoke LLM node
@@ -134,6 +145,7 @@ Network Demand Agent/
    ```
 
 2. **User enters answer (e.g., "3 buildings"):**
+
    ```
    Frontend:  POST /chat/{session_id} with body { message: "3 buildings" }
    Backend:   → Append HumanMessage to history
@@ -154,6 +166,7 @@ Network Demand Agent/
 ### Question Tagging & Extraction
 
 The system uses a tagging convention to coordinate question flow:
+
 - **Primary questions** are prefixed in the LLM response: `[ASK Q1]`, `[ASK Q2]`, etc.
 - **Clarifications** have no tag (just the text).
 - When frontend sees `[ASK Qn]` after sending an answer, it records the prior answer as the answer to QUESTIONS[n].
@@ -166,7 +179,9 @@ The system uses a tagging convention to coordinate question flow:
 ### Endpoints
 
 #### `POST /start`
+
 **Start a new conversation session.**
+
 - **Request Body:** (empty)
 - **Response:**
   ```json
@@ -179,7 +194,9 @@ The system uses a tagging convention to coordinate question flow:
 - **Status Codes:** 200 (OK), 500 (server error)
 
 #### `POST /chat/{session_id}`
+
 **Send user message and get next agent response.**
+
 - **Path Params:** `session_id` (UUID string)
 - **Request Body:**
   ```json
@@ -198,7 +215,9 @@ The system uses a tagging convention to coordinate question flow:
 - **Status Codes:** 200 (OK), 404 (session not found), 400 (conversation done), 500 (error)
 
 #### `GET /session/{session_id}`
+
 **Retrieve current session metadata (for debugging/monitoring).**
+
 - **Path Params:** `session_id` (UUID string)
 - **Response:**
   ```json
@@ -228,24 +247,28 @@ The system uses a tagging convention to coordinate question flow:
 ### Backend Setup
 
 1. **Navigate to the backend directory:**
+
    ```powershell
-   cd "Network Demand Agent\lg-fastapi-exp"
+   cd CSA-Main\csa-agent-main
    ```
 
 2. **Create a Python virtual environment (optional but recommended):**
+
    ```powershell
    python -m venv venv
    venv\Scripts\Activate.ps1
    ```
 
 3. **Install dependencies:**
+
    ```powershell
    pip install -r requirements.txt
    # or if using pyproject.toml:
    pip install -e .
    ```
-   
+
    **Required packages:**
+
    - `fastapi`
    - `uvicorn`
    - `langgraph`
@@ -255,22 +278,25 @@ The system uses a tagging convention to coordinate question flow:
    - `pydantic`
 
 4. **Set up environment variables:**
-   
-   Create or update `.env` file in `lg-fastapi-exp/` with:
+
+   Create or update `.env` file in `csa-agent-main/` with:
+
    ```
    AZURE_OPENAI_API_KEY=your_azure_openai_api_key
    AZURE_OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com/
    AZURE_OPENAI_API_VERSION=2024-08-01-preview
    ```
-   
+
    > **Note:** Obtain these from your Azure OpenAI resource in the Azure Portal (Keys & Endpoints).
 
 5. **Run the backend server:**
+
    ```powershell
    uvicorn fastapi_app:app --reload --host 0.0.0.0 --port 8000
    ```
-   
+
    Expected output:
+
    ```
    INFO:     Uvicorn running on http://0.0.0.0:8000
    INFO:     Application startup complete
@@ -279,21 +305,25 @@ The system uses a tagging convention to coordinate question flow:
 ### Frontend Setup
 
 1. **Navigate to the frontend directory:**
+
    ```powershell
-   cd "Network Demand Agent\NDA-frontend"
+   cd CSA-Main\NDA-frontend
    ```
 
 2. **Install dependencies:**
+
    ```powershell
    npm install
    ```
 
 3. **Run the development server:**
+
    ```powershell
    npm run dev
    ```
-   
+
    Expected output:
+
    ```
    VITE v7.2.2  ready in 123 ms
 
@@ -302,21 +332,23 @@ The system uses a tagging convention to coordinate question flow:
    ```
 
 4. **Open in browser:**
-   
+
    Navigate to `http://localhost:5173/` (or the URL shown in terminal).
 
 ### Running Both Together
 
 **In one PowerShell window (Backend):**
+
 ```powershell
-cd "Network Demand Agent\lg-fastapi-exp"
+cd CSA-Main\csa-agent-main
 # venv\Scripts\Activate.ps1  # if using venv
 uvicorn fastapi_app:app --reload --port 8000
 ```
 
 **In another PowerShell window (Frontend):**
+
 ```powershell
-cd "Network Demand Agent\NDA-frontend"
+cd CSA-Main\NDA-frontend
 npm run dev
 ```
 
@@ -326,19 +358,21 @@ npm run dev
 
 ### Frontend User Flow
 
-1. **Landing page:** Select a service category from the grid (e.g., "Building Coverage").
-2. **Category panel opens:** Depending on the category:
-   - **Site Details / Network:** Fill out a questionnaire one question at a time (stored locally, no backend call).
-   - **Building Coverage:** Click "Interact with AI Agent" to start a chat session with the LLM.
-3. **Chat interface:** 
-   - Read the agent's question.
-   - Type your answer in the input field.
-   - Click "Send Answer" or press Enter.
-   - Agent validates and asks the next question.
-4. **Completion:** When all 5 questions are answered, the agent outputs "Done" and displays a Markdown-formatted Network Infrastructure Requirements Summary (BoQ).
-5. **Start New:** Click "Start New" to reset and begin another session.
-
-### Example Questions
+1. **Home Page:** View the landing page with NEOM branding and select a service category from the grid.
+2. **Navigate to Chat:** Click on a category to navigate to the Chatbot-style chat interface.
+3. **Chat Interface:**
+   - Modern Chatbot-style layout with header showing NEOM logo and name
+   - Back button to return to home page
+   - Theme toggle for dark/light mode
+   - New chat button to restart conversation
+   - Auto-initialized chat session on page load
+   - Read the agent's question displayed in the chat history
+   - Type your answer in the input field at the bottom
+   - Press Enter or click send button
+   - Agent validates and asks the next question
+   - Messages display with smooth animations and proper formatting
+4. **Completion:** When all questions are answered, the agent outputs "Done" and displays a Markdown-formatted Network Infrastructure Requirements Summary (BoQ).
+5. **Start New:** Click the new chat button (+ icon) to reset and begin another session.### Example Questions
 
 The backend asks 5 primary questions in sequence:
 
@@ -357,11 +391,13 @@ The backend asks 5 primary questions in sequence:
 **Purpose:** REST API endpoints and session lifecycle.
 
 **Key Functions:**
+
 - `start_conversation()` — Initialize session, invoke graph, return first question.
 - `send_message(session_id, user_msg)` — Record user answer, reinvoke graph, return next question or done state.
 - `get_session_info(session_id)` — Retrieve current session metadata.
 
 **Session Storage:**
+
 ```python
 sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis for production
 ```
@@ -373,6 +409,7 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
 **Key Components:**
 
 - **GraphState (TypedDict):**
+
   - `history`: List of LangChain message objects (HumanMessage, AIMessage, SystemMessage).
   - `next_question`: The agent's last-generated message (string).
   - `done`: Boolean flag indicating conversation completion.
@@ -382,6 +419,7 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
   - `awaiting_answer`: Flag indicating whether the graph should pause and wait for user input.
 
 - **llm_node(state):**
+
   - Retrieves Azure OpenAI LLM.
   - Builds system prompt via `generate_system_prompt(extracted_info)`.
   - Sends message history to LLM.
@@ -389,6 +427,7 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
   - Appends LLM response to message history.
 
 - **human_node(state):**
+
   - If `state["answer"]` is empty, sets `awaiting_answer=True` and pauses execution (so API can return question to client).
   - If answer present, appends it to history and updates `extracted_info` if it was a primary question.
 
@@ -422,12 +461,14 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
 **Purpose:** Root component with theme management and category selection.
 
 **Key Features:**
+
 - Dark mode toggle with localStorage persistence.
 - Header with branding and actions.
 - Category grid and panel wrapper.
 - Footer with links.
 
 **State:**
+
 - `selectedCategoryId`: Currently selected category.
 - `panelOpen`: Whether the panel is open.
 - `darkMode`: Theme preference.
@@ -439,6 +480,7 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
 **Sub-components:**
 
 1. **AIAgentInteraction():**
+
    - Manages AI chat for categories like "building-coverage".
    - Key functions:
      - `startConversation()` — Call `POST /start`.
@@ -458,6 +500,7 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
 **Purpose:** Grid layout for all categories.
 
 **Props:**
+
 - `categories`: Array of category objects.
 - `selectedCategoryId`: Currently selected category ID.
 - `onSelect`: Callback when a category is clicked.
@@ -467,6 +510,7 @@ sessions: Dict[str, GraphState] = {}  # In-memory storage; replace with Redis fo
 **Purpose:** Static data defining categories and subcategories.
 
 **Structure:**
+
 ```javascript
 [
   {
@@ -496,8 +540,9 @@ AZURE_OPENAI_API_VERSION=2024-08-01-preview
 ### Frontend (Optional, in future)
 
 Currently hardcoded in `CategoryPanel.jsx`:
+
 ```javascript
-const API_BASE = 'http://localhost:8000';
+const API_BASE = "http://localhost:8000";
 ```
 
 **Recommended:** Move to `.env.local` and reference via `import.meta.env.VITE_API_BASE`.
@@ -509,15 +554,19 @@ const API_BASE = 'http://localhost:8000';
 ### Backend Issues
 
 **Issue:** `ModuleNotFoundError: No module named 'fastapi'`
+
 - **Solution:** Install dependencies: `pip install -r requirements.txt`
 
 **Issue:** `CORS error when frontend calls backend`
+
 - **Solution:** Backend has CORS enabled for all origins. Ensure backend is running on `http://localhost:8000` and frontend calls that address. Check browser console for exact error.
 
 **Issue:** `AZURE_OPENAI_API_KEY not found`
+
 - **Solution:** Create `.env` file in `lg-fastapi-exp/` with the required credentials. Use `dotenv.load_dotenv()` to load.
 
 **Issue:** LLM not generating questions with `[ASK Qn]` tags
+
 - **Solution:** The system prompt in `generate_system_prompt()` instructs the model to use these tags. If LLM ignores, it may be due to:
   - Model not understanding instructions (temperature too high; try 0.3).
   - System prompt not being sent correctly. Check `llm_node` in `main.py` — use `SystemMessage` instead of `HumanMessage` for clarity.
@@ -525,13 +574,16 @@ const API_BASE = 'http://localhost:8000';
 ### Frontend Issues
 
 **Issue:** `npm install fails`
+
 - **Solution:** Ensure Node.js 18+ is installed. Try `npm cache clean --force` and retry.
 
 **Issue:** Frontend shows blank screen or 404 errors
+
 - **Solution:** Ensure Vite dev server is running (`npm run dev`) and you're visiting `http://localhost:5173/`.
 
 **Issue:** "Failed to connect to backend" or 404 on `/start`
-- **Solution:** 
+
+- **Solution:**
   1. Verify backend server is running: `http://localhost:8000` should respond.
   2. Check that the `API_BASE` URL in `CategoryPanel.jsx` matches your backend URL.
   3. Ensure CORS is enabled (it is, by default).
@@ -543,6 +595,7 @@ const API_BASE = 'http://localhost:8000';
 ### Backend
 
 1. **Replace in-memory session storage with Redis or a database:**
+
    ```python
    # Instead of sessions: Dict[str, GraphState] = {}
    import redis
@@ -550,19 +603,23 @@ const API_BASE = 'http://localhost:8000';
    ```
 
 2. **Use `SystemMessage` for system prompts:**
+
    ```python
    messages_for_llm = [SystemMessage(content=system_prompt)] + messages
    ```
 
 3. **Add structured response detection instead of substring matching:**
+
    - Have the LLM return JSON: `{ "status": "done", "report": "..." }`
 
 4. **Run with a production ASGI server:**
+
    ```bash
    gunicorn -w 4 -k uvicorn.workers.UvicornWorker fastapi_app:app --bind 0.0.0.0:8000
    ```
 
 5. **Set secure CORS origins:**
+
    ```python
    app.add_middleware(
        CORSMiddleware,
@@ -578,9 +635,11 @@ const API_BASE = 'http://localhost:8000';
 ### Frontend
 
 1. **Build for production:**
+
    ```powershell
    npm run build
    ```
+
    Output: `dist/` folder with optimized assets.
 
 2. **Deploy to a static host (Vercel, Netlify, etc.) or your own server.**
@@ -606,6 +665,7 @@ const API_BASE = 'http://localhost:8000';
 ### Logging
 
 - **Backend:** Add logging to `fastapi_app.py` for request/response tracking:
+
   ```python
   import logging
   logger = logging.getLogger(__name__)
@@ -620,7 +680,8 @@ const API_BASE = 'http://localhost:8000';
 
 ### Backend
 
-See `lg-fastapi-exp/pyproject.toml`:
+See `csa-agent-main/pyproject.toml`:
+
 ```toml
 [project]
 dependencies = [
@@ -637,6 +698,7 @@ dependencies = [
 ### Frontend
 
 See `NDA-frontend/package.json`:
+
 ```json
 {
   "dependencies": {
@@ -668,6 +730,7 @@ See `NDA-frontend/package.json`:
 ## Support & Contact
 
 For issues, questions, or suggestions:
+
 - **Backend:** Check `lg-fastapi-exp/` logs and `.env` setup.
 - **Frontend:** Review browser console and ensure API endpoint is correct.
 - **General:** Refer to this README or contact the development team.
@@ -677,6 +740,7 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### v0.1.0 (November 2025)
+
 - Initial release with multi-turn AI conversations.
 - Category-based UI with responsive design.
 - Azure OpenAI integration for question generation.
