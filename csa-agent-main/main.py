@@ -24,7 +24,7 @@ class LLM_Response(BaseModel):
     )
     next_response: str = Field(
         ..., 
-        description="The next message to send to the user (question, clarification, or final summary)"
+        description="The next message to send to the user (question, clarification, or final response table)"
     )
 
 # Bind structured output to LLM
@@ -184,7 +184,7 @@ def run_conversation():
         # Optionally, print final summary if available
         if final_state.get("status") == "done":
             print("\n✓ All requirements have been gathered.")
-            print("✓ Final summary has been generated.\n")
+            print("✓ Final summary Table has been generated.\n")
         
     except KeyboardInterrupt:
         print("\n\n" + "=" * 70)

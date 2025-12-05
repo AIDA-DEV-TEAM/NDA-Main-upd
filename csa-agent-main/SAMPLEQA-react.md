@@ -1,41 +1,64 @@
-### **1. IP Telephony Requirements**
-**How many buildings require IP telephony services?**
-* *Only 2 buildings require IP telephony services.*
+### **1. IP Telephony - General Requirements**
+**How many buildings require IP telephony services, and will the site have connectivity to the ABC Network (Yes/No)?**
+* *There are 3 buildings requiring services. Yes, the site will have connectivity to the ABC Network.*
 
 ---
-### **2. Rooms, Size, and Telephone Sets**
-**For each building, could you specify the number of rooms, the size of each room, and the number of telephone sets required per room?**
-* *Each building has 12 rooms of approximately 200 sq ft, needing 3 telephone sets per room.*
+### **2. IP Telephony - Area Breakdown**
+**Could you please specify the details for the different area types? Offices: How many admin/management offices are in each building? Accommodations: How many accommodation units are in each building? Other: Are there any other area types (e.g., Hotel, Hospital) and how many rooms in each building?**
+* *Offices: Building A has 10 offices, Building B has 5, and Building C has 5.*
+* *Accommodations: Building A has 0 units, while Buildings B and C have 50 units each.*
+* *Other: No other area types.*
 
 ---
-### **3. Network Provider**
-**Could you also specify whether the network used is ABC Company or not?**
-* *Yes, all buildings use ABC Company's network.*
+### **3. IP Telephony - Office Hardware**
+**For the Office Area, please specify the quantities required for each phone type- Executive Phone, Manager Phone, Employee Phone, Conference Phone, Any other types?**
+* *Executive Phone: 5*
+* *Manager Phone: 15*
+* *Employee Phone: 100*
+* *Conference Phone: 3*
+* *Other: None*
 
 ---
-### **4. Common Area Connectivity**
-**Which common areas need Wi-Fi or IP telephony services?**
-* *The lobby, cafeteria, and meeting rooms need coverage.*
+### **4. IP Telephony - Accommodation Hardware**
+**For the Accommodation Area, please specify the quantities required for- Living Room, Bed Room, Wash Room / Rest Room**
+* *Living Room: 100 (1 per unit)*
+* *Bed Room: 200 (2 per unit)*
+* *Wash Room: 0*
 
 ---
-### **5. Call Centre / ACD Services**
-**Are call center or ACD services required? If yes, please provide specifications.**
-* *We need ACD services for 10 positions and up to 5 concurrent calls. No extra features needed.*
+### **5. IP Telephony - Service Features**
+**Is voice mail required (Yes/No)? And regarding calling requirements, do you need Only Internal calls or Internal and External calls both?**
+* *Yes, voice mail is required. We need both Internal and External calling capabilities.*
 
 ---
-### **6. Standard Video Conferencing**
-**How many rooms in each building require Video Conferencing systems?**
-* *We have 5 rooms in total, each around 350 sq ft, for 12 people.*
+### **6. SIP Trunk & ISP - General**
+**Please provide the Location Coordinates. How many DID (direct numbers) and DID/DOD channels are required?**
+* *Coordinates are 25.276987, 55.296249. We require 50 DIDs and 30 Channels.*
 
 ---
-### **7. Executive Video Conferencing / Telepresence**
-**How many rooms need Executive VC or telepresence?**
-* *Building 1: 2 rooms, 400 sq ft each, for 15 people. Building 2: 1 room, 450 sq ft, for 20 people.*
+### **7. SIP Trunk & ISP - Calling Options**
+**Which of the following calling options are required? Local, National, Mobile, International, Toll Free, Any other (please specify)?**
+* *We require Local, Mobile, and International calling options.*
 
 ---
-### **8. Corporate Office Reservations**
-**Are any offices reserved for ABC employees?**
-* *Yes, 5 offices across buildings, each with 4-person capacity, and 3 meeting rooms.*
+### **8. Customer Care / Call Center - Capacity**
+**For the Call Center, please specify: Number of Supervisors, Number of Seat Agents, Number of Concurrent Calls**
+* *Supervisors: 2*
+* *Seat Agents: 10*
+* *Concurrent Calls: 15*
 
 ---
+### **9. Customer Care / Call Center - Features**
+**Regarding Call Center features, do you require Call Recordings and Storage? Please also list any other detailed features needed.**
+* *Yes, call recording is required with storage for 6 months. We also need IVR and basic reporting features.*
 
+---
+### **10. Video Conferencing - Room Types & Quantities**
+**Please specify the number of rooms required for each Video Conferencing type: Meeting Pods/Silent Room/Focus Room (1-2 Person), Huddle Room (1-3 Person/Chair), Small Room (3-6 Person/Chair), Executive Director personal office (1-3 Person/Chair), Medium meeting room (6-8 Person/Chair), Large meeting room (8-14 Person/Chair), Board Room (12-18 Person/Chair)**
+* *Meeting Pods: 2*
+* *Huddle Rooms: 4*
+* *Small Rooms: 2*
+* *Executive Director Office: 1*
+* *Medium Meeting Rooms: 1*
+* *Large Meeting Rooms: 1*
+* *Board Room: 1*

@@ -2,21 +2,20 @@
 import json
 
 QUESTIONS = [
-    "**IP Telephony Requirements** - How many buildings require IP telephony services?",
-    "For each building, could you specify the number of rooms, the size of each room, and the number of telephone sets required per room?",
-    "Could you also specify whether the network used is ABC Company or not?",
-    "**Common Area Connectivity** - For the buildings that require coverage, which common areas (e.g., lobbies, corridors, cafeteria) need to be covered with Wi-Fi or IP telephony services?",
-    "**Call Centre / ACD Services** - Are call center or ACD services required? If yes, please provide the number of positions, the number of concurrent calls, additional features, and any other detailed requirements.",
-    "**Standard Video Conferencing** - How many rooms in each building require Video Conferencing systems? Please specify the size of each room and the number of people expected to use the system in each room.",
-    "**Executive Video Conferencing / Telepresence** - How many rooms in each building need Executive Video Conferencing systems or telepresence? Please include the size of the room and the expected number of people per room.",
-    "**Corporate Office Reservations** - Are there any offices reserved for ABC employees in these buildings? If yes, could you provide the number of offices, the people capacity of each, and the number of meeting rooms?"
-]
+    "**IP Telephony - General Requirements** - How many buildings require IP telephony services, and will the site have connectivity to the ABC Network (Yes/No)?",
+    "**IP Telephony - Area Breakdown** - Could you please specify the details for the different area types?\n Offices: How many admin/management offices are in each building?\n Accommodations: How many accommodation units are in each building?\n Other: Are there any other area types (e.g., Hotel, Hospital) and how many rooms in each building?",
+    "**IP Telephony - Office Hardware** - For the Office Area, please specify the quantities required for each phone type-\n Executive Phone\n Manager Phone \n Employee Phone \n Conference Phone \n Any other types?",
+    "**IP Telephony - Accommodation Hardware** - For the Accommodation Area, please specify the quantities required for-\n Living Room\n Bed Room \n Wash Room / Rest Room \n",
+    "**IP Telephony - Service Features** - Is voice mail required (Yes/No)? And regarding calling requirements, do you need Only Internal calls or Internal and External calls both?",
 
-ROOM_SIZE_REFERENCE = """
-- small ≈ 4×5 meters (20 sq m / ~215 sq ft)
-- medium ≈ 6×8 meters (48 sq m / ~516 sq ft)
-- large ≈ 8×10 meters (80 sq m / ~861 sq ft)
-"""
+    "**SIP Trunk & ISP - General** - Please provide the Location Coordinates. How many DID (direct numbers) and DID/DOD channels are required?",
+    "**SIP Trunk & ISP - Calling Options** - Which of the following calling options are required?\n Local\n National\n Mobile\n International\n Toll Free\n Any other (please specify)?",
+
+    "**Customer Care / Call Center - Capacity** - For the Call Center, please specify:\n Number of Supervisors\n Number of Seat Agents\n Number of Concurrent Calls",
+    "**Customer Care / Call Center - Features** - Regarding Call Center features, do you require Call Recordings and Storage? Please also list any other detailed features needed.",
+
+    "**Video Conferencing - Room Types & Quantities** - Please specify the number of rooms required for each Video Conferencing type:\n Meeting Pods/Silent Room/Focus Room (1-2 Person)\n Huddle Room (1-3 Person/Chair)\n Small Room (3-6 Person/Chair)\n Executive Director personal office (1-3 Person/Chair)\n Medium meeting room (6-8 Person/Chair)\n Large meeting room (8-14 Person/Chair)\n Board Room (12-18 Person/Chair)",]
+
 
 def format_questions(questions):
     return "\n".join(f"{i+1}. {q}" for i, q in enumerate(questions))
@@ -32,9 +31,9 @@ def format_answers(messages_history: list):
 
 def nda_llm_prompt(messages_history: list) -> str:
     return f"""
-You are an AI assistant gathering data for network infrastructure planning.
+You are an AI assistant gathering data for infrastructure planning.
 
-Your goal is to systematically collect requirements by asking questions in order, validating responses, and producing a final summary when all information is gathered.
+Your goal is to systematically collect requirements by asking questions in order, validating responses, and producing a final summary table of questions and responses provided by the user.
 
 === QUESTIONS TO ASK (in order) ===
 {format_questions(QUESTIONS)}
@@ -42,16 +41,11 @@ Your goal is to systematically collect requirements by asking questions in order
 === CONVERSATION SO FAR ===
 {format_answers(messages_history)}
 
-=== ROOM SIZE INTERPRETATION ===
-If the user mentions room size categories instead of numeric dimensions, interpret them as:
-{ROOM_SIZE_REFERENCE}
-
-When documenting, convert "small/medium/large" to these approximate dimensions automatically, unless the user explicitly provides different measurements.
 
 === QUESTION FORMATTING RULES ===
-- Include the section label (e.g., **IP Telephony Requirements**) when asking questions from the list above. **YOU MUST INCLUDE THE BOLD HEADING AT THE START OF THE QUESTION.**
+- Include the section label (e.g., **IP Telephony - General Requirements**) when asking questions from the list above. **YOU MUST INCLUDE THE BOLD HEADING AT THE START OF THE QUESTION.**
 - Even if you rephrase the question, you MUST keep the heading exactly as is.
-- Keep your tone professional but conversational
+- Keep your tone professional and friendly but conversational
 
 === ANSWER VALIDATION POLICY ===
 Before moving to the next question, ensure the current answer meets these criteria:
@@ -76,14 +70,8 @@ Before moving to the next question, ensure the current answer meets these criter
 When ALL questions have been answered (or explicitly accepted as incomplete by user):
 
 1. Set status to "done"
-2. Generate a comprehensive final summary in clean Professional Markdown format. **CRITICAL: Ensure the output uses standard Markdown formatting (actual line breaks, lists, and headings) for proper rendering, no running commentary or extra text should be shown.**
-3. Use the heading: "Collaboration Service - Infrastructure Requirements Summary"
-4. Include all sections with clear subsections and use **bullet points** and **actual line breaks** to format lists and details.
-5. Add a "Time Estimates" section at the end with:
-    - Individual component installation times
-    - Total estimated project time
-6. Base estimates on the actual requirements provided
-7. Do NOT use words like "BOQ" or "Bill of Quantities"
+2. Generate a comprehensive final summary of questions and responses in clean Professional Markdown Tabular format. 
+We can have a table with 3 columns: Section, Question, and User Response.
 
 === OUTPUT FORMAT (for non-Done turns) ===
 - Output ONLY your next message to the user
@@ -94,5 +82,5 @@ When ALL questions have been answered (or explicitly accepted as incomplete by u
 === STRUCTURED RESPONSE REQUIREMENT ===
 You MUST respond with exactly these two fields:
 - status: "done" or "not done"
-- next_response: Your message (question, clarification, or final summary)
+- next_response: Your message (question, clarification, or final response table)
 """
