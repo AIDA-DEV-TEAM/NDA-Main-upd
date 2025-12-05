@@ -1,5 +1,6 @@
 #fastapi_app.py
 import uuid
+from threading import RLock
 from typing import Dict, Any
 from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException
@@ -7,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage
 from main import app as langgraph_app
+from create_boq import create_boq as generate_boq_content
 
 app = FastAPI(title="CSA Backend API")
 
@@ -21,6 +23,7 @@ app.add_middleware(
 
 # In-memory session storage with timestamps
 sessions: Dict[str, Dict[str, Any]] = {}
+session_lock = RLock()
 SESSION_TIMEOUT = timedelta(hours=1)
 
 # Models
@@ -43,19 +46,21 @@ class SessionInfo(BaseModel):
 def cleanup_old_sessions():
     """Remove sessions older than timeout"""
     cutoff = datetime.now() - SESSION_TIMEOUT
-    expired = [sid for sid, data in sessions.items() 
-               if data.get("created_at", datetime.now()) < cutoff]
-    for sid in expired:
-        del sessions[sid]
+    with session_lock:
+        expired = [sid for sid, data in sessions.items() 
+                   if data.get("created_at", datetime.now()) < cutoff]
+        for sid in expired:
+            del sessions[sid]
 
 def validate_session(session_id: str) -> Dict[str, Any]:
     """Validate session exists and is not expired"""
     cleanup_old_sessions()
     
-    if session_id not in sessions:
-        raise HTTPException(status_code=404, detail="Session not found or expired")
-    
-    return sessions[session_id]
+    with session_lock:
+        if session_id not in sessions:
+            raise HTTPException(status_code=404, detail="Session not found or expired")
+        
+        return sessions[session_id]
 
 # API Endpoints
 @app.post("/start", response_model=ChatResponse)
@@ -72,12 +77,13 @@ def start_conversation():
         "mode": "api"
     }
     
-    result = langgraph_app.invoke(initial_state, {"recursion_limit": 200})
+    result = langgraph_app.invoke(initial_state, {"recursion_limit": 400})
     
     # Add metadata
     result["created_at"] = datetime.now()
     result["updated_at"] = datetime.now()
-    sessions[session_id] = result
+    with session_lock:
+        sessions[session_id] = result
     
     agent_message = str(result.get("next_response", "")).strip()
     
@@ -95,7 +101,7 @@ def send_message(session_id: str, user_msg: UserMessage):
     if previous_state.get("status") == "done":
         raise HTTPException(
             status_code=400, 
-            detail="Conversation already completed. Start a new session."
+            detail="Conversation already completed."
         )
     
     # Build updated state
@@ -107,12 +113,13 @@ def send_message(session_id: str, user_msg: UserMessage):
     }
     
     # Invoke graph
-    result = langgraph_app.invoke(state_update, {"recursion_limit": 200})
+    result = langgraph_app.invoke(state_update, {"recursion_limit": 400})
     
     # Update session with metadata
     result["created_at"] = previous_state.get("created_at", datetime.now())
     result["updated_at"] = datetime.now()
-    sessions[session_id] = result
+    with session_lock:
+        sessions[session_id] = result
     
     agent_message = str(result.get("next_response", "")).strip()
     
@@ -121,6 +128,50 @@ def send_message(session_id: str, user_msg: UserMessage):
         agent_message=agent_message,
         status=result.get("status", "not done")
     )
+
+@app.post("/create_boq/{session_id}", response_model=ChatResponse)
+def create_boq(session_id: str):
+    """Create BOQ for the project based on the information received from the user"""
+    # This acts as a creation endpoint for the BOQ document.
+    
+    # Validate session
+    current_state = validate_session(session_id)
+    
+    # Retrieve status and summary
+    status = current_state.get("status", "not done")
+    
+    # Ideally we expect status to be done to generate final BOQ
+    if status != "done":
+         raise HTTPException(
+            status_code=400, 
+            detail="Conversation not completed. Please finish the questions first."
+        )
+
+    # The summary is stored in 'next_response' of the completed session
+    # The summary is stored in 'next_response' of the completed session
+    info_summary = str(current_state.get("next_response", "")).strip()
+    
+    if not info_summary:
+        raise HTTPException(
+            status_code=400, 
+            detail="No information summary available. Please complete conversation first."
+        )
+
+    # Generate BOQ
+    try:
+        boq_output = generate_boq_content(info_summary)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Failed to generate BOQ: {str(e)}"
+        )
+    
+    return ChatResponse(
+        session_id=session_id,
+        agent_message=boq_output,
+        status=status
+    )
+    
 
 @app.get("/session/{session_id}", response_model=SessionInfo)
 def get_session_info(session_id: str):
@@ -139,10 +190,11 @@ def get_session_info(session_id: str):
 @app.delete("/session/{session_id}")
 def delete_session(session_id: str):
     """Manually delete a session"""
-    if session_id not in sessions:
-        raise HTTPException(status_code=404, detail="Session not found")
-    
-    del sessions[session_id]
+    with session_lock:
+        if session_id not in sessions:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        del sessions[session_id]
     return {"message": "Session deleted successfully"}
 
 @app.get("/health")
